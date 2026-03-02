@@ -4,24 +4,25 @@ public class ClassroomController {
     public ClassroomController(DeviceRegistry reg) { this.reg = reg; }
 
     public void startClass() {
-        SmartClassroomDevice pj = reg.getFirstOfType("Projector");
-        pj.powerOn();
-        pj.connectInput("HDMI-1");
+        InputConnectable pjInput = reg.getFirstWithCapability(InputConnectable.class);
+        if (pjInput instanceof PowerControllable) ((PowerControllable) pjInput).powerOn();
+        pjInput.connectInput("HDMI-1");
 
-        SmartClassroomDevice lights = reg.getFirstOfType("LightsPanel");
+        BrightnessControllable lights = reg.getFirstWithCapability(BrightnessControllable.class);
         lights.setBrightness(60);
 
-        SmartClassroomDevice ac = reg.getFirstOfType("AirConditioner");
+        TemperatureControllable ac = reg.getFirstWithCapability(TemperatureControllable.class);
         ac.setTemperatureC(24);
 
-        SmartClassroomDevice scan = reg.getFirstOfType("AttendanceScanner");
+        ScannerDevice scan = reg.getFirstWithCapability(ScannerDevice.class);
         System.out.println("Attendance scanned: present=" + scan.scanAttendance());
     }
 
     public void endClass() {
         System.out.println("Shutdown sequence:");
-        reg.getFirstOfType("Projector").powerOff();
-        reg.getFirstOfType("LightsPanel").powerOff();
-        reg.getFirstOfType("AirConditioner").powerOff();
+        // FIXED: We ask the registry for EVERYTHING that has a power switch, and turn them all off!
+        for (PowerControllable device : reg.getAllWithCapability(PowerControllable.class)) {
+            device.powerOff();
+        }
     }
 }
