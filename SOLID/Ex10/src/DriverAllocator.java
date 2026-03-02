@@ -1,6 +1,7 @@
-public class DriverAllocator {
-    public String allocate(String studentId) {
-        // fake deterministic driver
+public class DriverAllocator implements DriverAllocationService {
+
+    @Override
+    public String allocateDriver(TripRequest req) {
         return "DRV-17";
     }
 }

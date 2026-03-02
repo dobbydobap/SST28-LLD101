@@ -1,23 +1,49 @@
 public class TransportBookingService {
-    // DIP violation: direct concretes
+
+    private final DistanceService distanceService;
+    private final DriverAllocationService driverAllocator;
+    private final PaymentService paymentService;
+
+    // ✅ default wiring (keeps Demo working)
+    public TransportBookingService() {
+        this(
+                new DistanceCalculator(),
+                new DriverAllocator(),
+                new PaymentGateway()
+        );
+    }
+
+    // ✅ DIP constructor
+    public TransportBookingService(
+            DistanceService distanceService,
+            DriverAllocationService driverAllocator,
+            PaymentService paymentService) {
+
+        this.distanceService = distanceService;
+        this.driverAllocator = driverAllocator;
+        this.paymentService = paymentService;
+    }
+
     public void book(TripRequest req) {
-        DistanceCalculator dist = new DistanceCalculator();
-        DriverAllocator alloc = new DriverAllocator();
-        PaymentGateway pay = new PaymentGateway();
 
-        double km = dist.km(req.from, req.to);
-        System.out.println("DistanceKm=" + km);
+        System.out.println("=== Transport Booking ===");
 
-        String driver = alloc.allocate(req.studentId);
+        double distance = distanceService.distanceKm(req);
+        System.out.println("DistanceKm=" + distance);
+
+        String driver = driverAllocator.allocateDriver(req);
         System.out.println("Driver=" + driver);
 
-        double fare = 50.0 + km * 6.6666666667; // messy pricing
+
+        double fare = 50.0 + distance * 6.6666666667;
         fare = Math.round(fare * 100.0) / 100.0;
 
-        String txn = pay.charge(req.studentId, fare);
+        String txn = paymentService.charge(fare);
         System.out.println("Payment=PAID txn=" + txn);
 
-        BookingReceipt r = new BookingReceipt("R-501", fare);
-        System.out.println("RECEIPT: " + r.id + " | fare=" + String.format("%.2f", r.fare));
+        System.out.printf(
+                "RECEIPT: R-501 | fare=%.2f%n",
+                fare
+        );
     }
 }

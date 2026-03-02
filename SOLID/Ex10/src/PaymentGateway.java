@@ -1,6 +1,7 @@
-public class PaymentGateway {
-    public String charge(String studentId, double amount) {
-        // fake deterministic txn
+public class PaymentGateway implements PaymentService {
+
+    @Override
+    public String charge(double amount) {
         return "TXN-9001";
     }
 }
