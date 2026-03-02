@@ -1,11 +1,16 @@
-public class SecretaryTool implements ClubAdminTools {
-    private final MinutesBook book;
-    public SecretaryTool(MinutesBook book) { this.book = book; }
+public class SecretaryTool
+        implements ClubAdminTools, MinutesOps {
 
-    @Override public void addMinutes(String text) { book.add(text); }
+    private int minutes = 0;
 
-    @Override public void addIncome(double amt, String note) { /* irrelevant */ }
-    @Override public void addExpense(double amt, String note) { /* irrelevant */ }
-    @Override public void createEvent(String name, double budget) { /* irrelevant */ }
-    @Override public int getEventsCount() { return 0; }
+    @Override
+    public void addMinutes(String text) {
+        minutes++;
+        System.out.println("Minutes added: \"" + text + "\"");
+    }
+
+    @Override
+    public int minutesCount() {
+        return minutes;
+    }
 }

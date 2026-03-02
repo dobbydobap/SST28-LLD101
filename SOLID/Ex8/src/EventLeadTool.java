@@ -1,11 +1,18 @@
-public class EventLeadTool implements ClubAdminTools {
-    private final EventPlanner planner;
-    public EventLeadTool(EventPlanner planner) { this.planner = planner; }
+public class EventLeadTool
+        implements ClubAdminTools, EventOps {
 
-    @Override public void createEvent(String name, double budget) { planner.create(name, budget); }
-    @Override public int getEventsCount() { return planner.count(); }
+    private int events = 0;
 
-    @Override public void addIncome(double amt, String note) { /* irrelevant */ }
-    @Override public void addExpense(double amt, String note) { /* irrelevant */ }
-    @Override public void addMinutes(String text) { /* irrelevant */ }
+    @Override
+    public void createEvent(String name, int budget) {
+        events++;
+        System.out.println(
+                "Event created: " + name + " (budget=" + budget + ")"
+        );
+    }
+
+    @Override
+    public int eventCount() {
+        return events;
+    }
 }
